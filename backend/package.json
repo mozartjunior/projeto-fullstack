@@ -1,20 +1,18 @@
 {
-  "name": "backend",
+  "name": "backend-projeto-fullstack",
   "version": "1.0.0",
-  "description": "Backend do sistema manutencao preventiva",
+  "description": "Backend do Sistema PIM - Manutenção Preventiva",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch src/server.js",
+    "dev": "tsx watch src/server.ts",
     "build": "npx tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.ts"
   },
-  
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
-  "main": "index.js",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "compression": "^1.8.1",
@@ -26,9 +24,17 @@
     "nodemon": "^3.1.14",
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
+    "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typeorm": "^0.3.28",
     "typescript": "^6.0.2",
     "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/compression": "^1.8.1",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.5.0"
   }
 }
