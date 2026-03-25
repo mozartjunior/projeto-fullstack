@@ -2,6 +2,7 @@
 export enum Perfil{
     
     GESTOR,
-    SOLICITANTE
+    SOLICITANTE,
+    COMPRADOR
 
 }
