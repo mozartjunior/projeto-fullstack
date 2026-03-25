@@ -1,33 +1,34 @@
-// import { Entity, PrimaryGeneratedColumn } from "typeorm";
-// import { Column } from "typeorm/browser";
+import { Entity,PrimaryGeneratedColumn,Column, ManyToOne, JoinColumn } from "typeorm";
+import { Equipamento } from "./Equipamento.js";
+import { Usuario } from "./Usuario.js";
 
-// @Entity("plano_manutencao")
-// export class PlanoManutencao {
+@Entity("plano_manutencao")
+export class PlanoManutencao {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-//     @PrimaryGeneratedColumn()
-//     id!: number;
+  // FK -> equipamento
+  @ManyToOne(() => Equipamento, { nullable: false })
+  @JoinColumn({ name: "equipamento_id" })
+  equipamento: Equipamento;
 
-//     @Column({ type: 'text', unique: true })
-//     codigo!: string;
+  @Column({ type: "text", nullable: false })
+  titulo: string;
 
-//     @Column({ type: 'text' })
-//     equipamento_id!: number;
+  @Column({ type: "text", nullable: true })
+  descricao: string | null;
 
-//     @Column({ type: 'text' })
-//     titulo!: string;
+  @Column({ type: "int", nullable: false })
+  periodicidade_dias: number;
 
-//     @Column({ type: 'text' })
-//     descricao!: string;
+  // FK -> usuario (técnico responsável padrão)
+  @ManyToOne(() => Usuario, { nullable: true })
+  @JoinColumn({ name: "tecnico_id" })
+  tecnico: Usuario | null;
 
-//     @Column({ type: 'int', nullable: true })
-//     periodicidade_dias?: string;
+  @Column({ type: "date", nullable: false })
+  proxima_em: Date;
 
-//     @Column({ type: 'int', nullable: true })
-//     tecnico_id?: number;
-
-//     @Column({ type: 'date', default: true })
-//     proxima_em!: boolean;
-
-//     @Column({ type: 'boolean', default: true })
-//     ativo!: boolean;
-// }
+  @Column({ type: "boolean", default: true })
+  ativo: boolean;
+}
