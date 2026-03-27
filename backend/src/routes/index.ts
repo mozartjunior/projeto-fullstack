@@ -1,12 +1,12 @@
 import { Router } from "express";
 
-const router = Router();
+const routes = Router();
 
-router.get("/", (req, res) => {
+routes.get("/", (req, res) => {
   res.json({
     status: "ok",
     message: "API PreventivaPIM está funcionando!"
   });
 });
 
-export default router;
+export default routes;
