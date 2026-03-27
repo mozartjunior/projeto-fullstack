@@ -1,5 +1,8 @@
 import type { Request, Response } from "express";
 import { CreateEquipamentoService } from "../services/equipamento/CreateEquipamentoService.js";
+import { DeleteEquipamentoService } from "../services/equipamento/DeleteEquipamentoService.js";
+import { ListEquipamentoService } from "../services/equipamento/ListEquipamentosService.js";
+import { UpdateEquipamentoService } from "../services/equipamento/UpdateEquipamentoService.js";
 import { EquipamentoRepository } from "../repositories/EquipamentoRepository.js";
 
 export class EquipamentoController {
@@ -14,7 +17,7 @@ export class EquipamentoController {
         }catch (error: any){
         return res.status(400).json({
             message: error.message || "Erro ao criar equipamento",
-        });
+            });
         }
     }
 }
