@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
-// import { Column } from "typeorm/browser";
 import { Perfil } from "../types/Perfil.js";
+import { Sessao } from "./Sessao.js";
 
 
 @Entity("usuario")
@@ -18,7 +18,7 @@ export class Usuario{
     @Column({type:'text', unique: true, nullable: false})
     email!: string;
 
-    @Column({type:'enum', enum: Perfil, default: Perfil.SOLICITANTE, nullable: false})
+    @Column({type:'enum', enum: Perfil, default: Perfil.TECNICO, nullable: false})
     perfil!: Perfil;
 }
 

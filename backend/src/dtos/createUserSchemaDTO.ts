@@ -24,3 +24,6 @@ export const createUserSchema = z.object({
 export const updateUserSchema = createUserSchema
     .omit({ password: true })
     .partial()
+
+export type CreateUserDTO = z.infer<typeof createUserSchema>
+export type UpdateUserDTO = z.infer<typeof updateUserSchema>
