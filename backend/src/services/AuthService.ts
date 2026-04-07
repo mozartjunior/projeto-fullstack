@@ -21,7 +21,7 @@ export class AuthService {
 
     private gerarAccessToken(usuario: Usuario): string {
         return (jwt.sign as Function)(
-            { sub: usuario.id, perfil: usuario.perfil },
+            { sub: usuario.id_usuario, perfil: usuario.perfil },
             process.env.JWT_ACCESS_SECRET!,
             { expiresIn: "15m" }
         );
@@ -40,7 +40,7 @@ export class AuthService {
             where: { email },
             relations: { setor: true },
             select: {
-                id: true,
+                id_usuario: true,
                 nome: true,
                 email: true,
                 senha_hash: true,
@@ -66,7 +66,7 @@ export class AuthService {
         });
         await this.sessionRepo.save(sessao);
 
-        const refreshToken = this.gerarRefreshToken(sessao.id, usuario.id);
+        const refreshToken = this.gerarRefreshToken(sessao.id, usuario.id_usuario);
         sessao.refresh_token_hash = this.hashToken(refreshToken);
         sessao.expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         await this.sessionRepo.save(sessao);
@@ -97,9 +97,9 @@ export class AuthService {
         if (!sessao || sessao.revoked_at) throw new AppError("Sessao invalida", 401);
         if (sessao.expires_at < new Date()) throw new AppError("Refresh token expirado", 401);
         if (sessao.refresh_token_hash !== this.hashToken(refreshToken)) throw new AppError("Refresh token invalido", 401);
-        if (sessao.usuario.id !== userId) throw new AppError("Sessao invalida", 401);
+        if (sessao.usuario.id_usuario !== userId) throw new AppError("Sessao invalida", 401);
 
-        const novoRefreshToken = this.gerarRefreshToken(sessao.id, sessao.usuario.id);
+        const novoRefreshToken = this.gerarRefreshToken(sessao.id, sessao.usuario.id_usuario);
         sessao.refresh_token_hash = this.hashToken(novoRefreshToken);
         sessao.expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         await this.sessionRepo.save(sessao);

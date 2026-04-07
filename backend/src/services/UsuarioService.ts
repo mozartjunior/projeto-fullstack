@@ -19,7 +19,7 @@ export class UsuarioService {
     }
 
     async findById(id: string) {
-        return await this.userRepo.findOne({ where: { id } });
+        return await this.userRepo.findOne({ where: { id_usuario: id } });
     }
 
     async findAll() {
