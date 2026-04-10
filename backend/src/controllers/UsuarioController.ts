@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import type { UsuarioService } from "../services/UsuarioService.js";
-import type { CreateUserSchemaDTO } from "../dtos/CreateUserSchemaDTO.js";
-import type { UpdateUserSchemaDTO } from "../dtos/CreateUserSchemaDTO.js";
+import type { CreateUserSchemaDTO } from "../dtos/createUserSchemaDTO.js";
+import type { UpdateUserSchemaDTO } from "../UpdateUserSchemaDTO.js";
 import { AppError } from "../errors/AppError.js";
 
 export default class UsuarioController {
