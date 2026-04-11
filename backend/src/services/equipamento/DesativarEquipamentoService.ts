@@ -1,4 +1,4 @@
-export class GetEquipamentoService {
+export class DesativarEquipamentoService {
 
   constructor(private equipamentoRepository: any) {}
 
@@ -14,6 +14,10 @@ export class GetEquipamentoService {
       throw new Error(`Equipamento #${id} não encontrado.`);
     }
 
-    return equipamento;
+    if (!equipamento.ativo) {
+      throw new Error(`Equipamento #${id} já está desativado.`);
+    }
+
+    return this.equipamentoRepository.update(equipamento.id, { ativo: false });
   }
 }

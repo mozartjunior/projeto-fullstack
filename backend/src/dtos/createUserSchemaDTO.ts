@@ -9,7 +9,8 @@ export const createUserSchema = z.object({
                 .refine((s) => /[A-Z]/.test(s), { error: "Deve conter ao menos 1 letra maiúscula" })
                 .refine((s) => /[a-z]/.test(s), { error: "Deve conter ao menos 1 letra minúscula" })
                 .refine((s) => /[^A-Za-z0-9]/.test(s), { error: "Deve conter ao menos 1 caractere especial" }),
-    perfil: z.enum(Perfil),
+    perfil: z.nativeEnum(Perfil),
+    //perfil: z.enum(Perfil)
     setor_id: z.uuid()
     
 })

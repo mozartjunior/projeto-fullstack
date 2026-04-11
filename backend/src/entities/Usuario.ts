@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { Perfil } from "../types/Perfil.js";
+import { Setor } from "./Setor.js";
 
 
 @Entity("usuario")
@@ -19,5 +20,9 @@ export class Usuario{
 
     @Column({type:'enum', enum: Perfil, nullable: false})
     perfil!: Perfil;
+
+    @ManyToOne(() => Setor, (setor) => setor.usuarios, { nullable: false })
+    @JoinColumn({ name: "id_setor" })
+    setor!: Setor;
 }
 

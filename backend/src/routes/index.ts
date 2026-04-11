@@ -4,7 +4,6 @@ import { EquipamentoController } from "../controllers/EquipamentoController.js";
 const routes = Router();
 const equipamentoController = new EquipamentoController();
 
-
 routes.get("/", (req, res) => {
   res.json({
     status: "ok",
@@ -12,15 +11,12 @@ routes.get("/", (req, res) => {
   });
 });
 
-// routes.get("/equipamentos", (req, res) => {
-//   res.json({
-//     status: "ok",
-//     message: "Endpoint de equipamentos funcionando!"
-//   });
-// })
-
-// routes.get("/equipamentos", (req, res)=> equipamentoController.list(req, res));
-routes.get("/equipamentos",equipamentoController.list.bind(equipamentoController));
+// Equipamentos
+routes.post("/equipamentos", (req, res) => equipamentoController.create(req, res));
+routes.get("/equipamentos", (req, res) => equipamentoController.getAll(req, res));
+routes.get("/equipamentos/:id", (req, res) => equipamentoController.getById(req, res));
+routes.put("/equipamentos/:codigo", (req, res) => equipamentoController.update(req, res));
+routes.patch("/equipamentos/:id/desativar", (req, res) => equipamentoController.desativar(req, res));
 
 
 
