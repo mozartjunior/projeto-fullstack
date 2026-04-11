@@ -1,8 +1,8 @@
 
 export enum Perfil{
     
-    GESTOR,
-    SOLICITANTE,
-    COMPRADOR
+    TECNICO,
+    SUPERVISOR,
+    GESTOR
 
 }

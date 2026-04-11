@@ -1,10 +1,12 @@
+import type { UUID } from "node:crypto";
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { uuid } from "zod";
 
 @Entity("equipamento")
 export class Equipamento {
 
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn("uuid")
+    id!: string;
 
     @Column({ type: 'text', unique: true })
     codigo!: string;
