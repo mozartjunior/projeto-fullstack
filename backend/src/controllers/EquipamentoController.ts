@@ -1,5 +1,3 @@
-// src/controllers/EquipamentoController.ts
-
 import type { Request, Response } from "express";
 import { CreateEquipamentoService } from "../services/equipamento/CreateEquipamentoService.js";
 import { ListEquipamentoService } from "../services/equipamento/ListEquipamentosService.js";
@@ -36,9 +34,9 @@ export class EquipamentoController {
     }
   }
 
-  async getById(req: Request, res: Response): Promise<Response> {
+  async getById(req: Request<{ id: string }>, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
+      const id = req.params.id;
       const repository = new EquipamentoRepository();
       const service = new GetEquipamentoService(repository);
       const result = await service.execute(id);
@@ -50,11 +48,11 @@ export class EquipamentoController {
     }
   }
 
-  async update(req: Request, res: Response): Promise<Response> {
+  async update(req: Request<{ id: string }>, res: Response): Promise<Response> {
     try {
       const repository = new EquipamentoRepository();
       const service = new UpdateEquipamentoService(repository);
-      const result = await service.execute(req.params.codigo, req.body);
+      const result = await service.execute(req.params.id, req.body);
       return res.status(200).json(result);
     } catch (error: any) {
       return res.status(400).json({

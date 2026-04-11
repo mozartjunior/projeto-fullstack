@@ -2,7 +2,7 @@ export class GetEquipamentoService {
 
   constructor(private equipamentoRepository: any) {}
 
-  async execute(id: number) {
+  async execute(id: string) {
 
     if (!id) {
       throw new Error("O campo id é obrigatório.");
