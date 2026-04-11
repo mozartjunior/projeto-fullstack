@@ -52,7 +52,7 @@ export class EquipamentoController {
     try {
       const repository = new EquipamentoRepository();
       const service = new UpdateEquipamentoService(repository);
-      const result = await service.execute(req.params.id, req.body);
+      const result = await service.execute(req.params.codigo, req.body);
       return res.status(200).json(result);
     } catch (error: any) {
       return res.status(400).json({
@@ -61,9 +61,9 @@ export class EquipamentoController {
     }
   }
 
-  async desativar(req: Request, res: Response): Promise<Response> {
+  async desativar(req: Request<{ id: string }>, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
+      const id = (req.params.id);
       const repository = new EquipamentoRepository();
       const service = new DesativarEquipamentoService(repository);
       const result = await service.execute(id);

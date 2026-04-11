@@ -14,12 +14,9 @@ routes.get("/", (req, res) => {
 // Equipamentos
 routes.post("/equipamentos", (req, res) => equipamentoController.create(req, res));
 routes.get("/equipamentos", (req, res) => equipamentoController.getAll(req, res));
+routes.patch("/equipamentos/:id/desativar", (req, res) => equipamentoController.desativar(req, res));
 routes.get("/equipamentos/:id", (req, res) => equipamentoController.getById(req, res));
 routes.put("/equipamentos/:codigo", (req, res) => equipamentoController.update(req, res));
-routes.patch("/equipamentos/:id/desativar", (req, res) => equipamentoController.desativar(req, res));
-
-
-
 
 
 export default routes;

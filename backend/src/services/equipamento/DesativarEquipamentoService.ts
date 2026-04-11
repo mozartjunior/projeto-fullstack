@@ -1,15 +1,12 @@
 export class DesativarEquipamentoService {
-
   constructor(private equipamentoRepository: any) {}
 
-  async execute(id: number) {
-
+  async execute(id: string) {
     if (!id) {
       throw new Error("O campo id é obrigatório.");
     }
 
     const equipamento = await this.equipamentoRepository.findById(id);
-
     if (!equipamento) {
       throw new Error(`Equipamento #${id} não encontrado.`);
     }
@@ -18,6 +15,6 @@ export class DesativarEquipamentoService {
       throw new Error(`Equipamento #${id} já está desativado.`);
     }
 
-    return this.equipamentoRepository.update(equipamento.id, { ativo: false });
+    return this.equipamentoRepository.updateById(equipamento.id, { ativo: false });
   }
 }
