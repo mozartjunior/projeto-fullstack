@@ -1,3 +1,11 @@
+# Node
 node_modules/
+
+# Builds
 dist/
+
+# Environment variables
 .env
+
+# Angular
+.angular/

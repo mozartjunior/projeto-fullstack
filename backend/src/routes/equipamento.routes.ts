@@ -9,5 +9,4 @@ router.get("/equipamentos", (req, res)=> controllers.list(req, res));
 router.put("/equipamentos/:codigo", (req, res)=> controllers.update(req, res));
 router.delete("/equipamentos/:codigo", (req, res) => controllers.delete(req, res));
 
-
 export default router;
