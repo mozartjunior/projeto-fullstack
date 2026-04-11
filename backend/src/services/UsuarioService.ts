@@ -1,93 +1,133 @@
 import type { DataSource, Repository } from "typeorm";
-import { hash } from "bcryptjs";
+import { compare } from "bcryptjs";
+import { createHash } from "crypto";
+import jwt, { type JwtPayload } from "jsonwebtoken";
 import { Usuario } from "../entities/Usuario.js";
-import { Setor } from "../entities/Setor.js";
-import type { CreateUserSchemaDTO, UpdateUserSchemaDTO } from "../dtos/CreateUserSchemaDTO.js";
+import { Sessao } from "../entities/Sessao.js";
 import { AppError } from "../errors/AppError.js";
 
-export class UsuarioService {
+export class AuthService {
     private userRepo: Repository<Usuario>;
-    private setorRepo: Repository<Setor>;
+    private sessionRepo: Repository<Sessao>;
 
     constructor(dataSource: DataSource) {
         this.userRepo = dataSource.getRepository(Usuario);
-        this.setorRepo = dataSource.getRepository(Setor);
+        this.sessionRepo = dataSource.getRepository(Sessao);
     }
 
-    async findByEmail(email: string) {
-        return await this.userRepo.findOne({ where: { email } });
+    private hashToken(token: string): string {
+        return createHash("sha256").update(token).digest("hex");
     }
 
-    async findById(id: string) {
-        return await this.userRepo.findOne({ where: { id_usuario: id } });
+    private gerarAccessToken(usuario: Usuario): string {
+        return (jwt.sign as Function)(
+            { sub: usuario.id_usuario, perfil: usuario.perfil },
+            process.env.JWT_ACCESS_SECRET!,
+            { expiresIn: "15m" }
+        );
     }
 
-    async findAll() {
-        return await this.userRepo.find({ relations: { setor: true } });
+    private gerarRefreshToken(sessionId: string, userId: string): string {
+        return (jwt.sign as Function)(
+            { sub: userId, sid: sessionId },
+            process.env.JWT_REFRESH_SECRET!,
+            { expiresIn: "7d" }
+        );
     }
 
-    async createUsuario(userData: CreateUserSchemaDTO) {
-        const usuario = await this.findByEmail(userData.email);
-        if (usuario) {
-            throw new AppError("Usuario ja cadastrado!", 409);
-        }
-
-        const setor = await this.setorRepo.findOne({ where: { id: userData.setor_id } });
-        if (!setor) {
-            throw new AppError("Setor nao encontrado!", 404);
-        }
-
-        const senha_hash = await hash(userData.password, 10);
-        const novoUsuario = await this.userRepo.save({
-            nome: userData.nome,
-            email: userData.email,
-            senha_hash,
-            perfil: userData.perfil,
-            setor
+    async login(email: string, senha: string, meta?: { ip?: string; userAgent?: string }) {
+        const usuario = await this.userRepo.findOne({
+            where: { email },
+            relations: { setor: true },
+            select: {
+                id_usuario: true,
+                nome: true,
+                email: true,
+                senha_hash: true,
+                perfil: true
+            }
         });
-
-        return novoUsuario;
-    }
-
-    async updateUsuario(id: string, userUpdate: UpdateUserSchemaDTO) {
-        const usuario = await this.findById(id);
-
         if (!usuario) {
-            throw new AppError("Usuario nao encontrado!", 404);
+            throw new AppError("Credenciais invalidas", 401);
         }
 
-        if (userUpdate.email && userUpdate.email !== usuario.email) {
-            const emailEmUso = await this.findByEmail(userUpdate.email);
-            if (emailEmUso) {
-                throw new AppError("Email ja cadastrado!", 409);
-            }
+        console.log(usuario)
+        const senhaCorreta = await compare(senha, usuario.senha_hash);
+        if (!senhaCorreta) {
+            throw new AppError("Credenciais invalidas", 401);
         }
 
-        let setor;
-
-        if (userUpdate.setor_id) {
-            setor = await this.setorRepo.findOne({
-                where: { id: userUpdate.setor_id },
-            });
-
-            if (!setor) {
-                throw new AppError("Setor nao encontrado!", 404);
-            }
-        }
-
-        Object.assign(usuario, {
-            ...userUpdate,
-            ...(setor && { setor }),
+        const sessao = this.sessionRepo.create({
+            usuario,
+            refresh_token_hash: "",
+            expires_at: new Date(),
+            ip: meta?.ip ?? null,
+            user_agent: meta?.userAgent ?? null,
         });
+        await this.sessionRepo.save(sessao);
 
-        return await this.userRepo.save(usuario);
+        const refreshToken = this.gerarRefreshToken(sessao.id, usuario.id_usuario);
+        sessao.refresh_token_hash = this.hashToken(refreshToken);
+        sessao.expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await this.sessionRepo.save(sessao);
+
+        const accessToken = this.gerarAccessToken(usuario);
+        return { accessToken, refreshToken, usuario };
     }
 
-    async deleteUsuario(id: string) {
-        const result = await this.userRepo.delete(id);
-
-        if (result.affected === 0) {
-            throw new AppError("Usuario nao encontrado!", 404);
+    async refresh(refreshToken: string) {
+        let payload: JwtPayload;
+        try {
+            payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as JwtPayload;
+        } catch {
+            throw new AppError("Refresh token invalido", 401);
         }
+
+        const sessionId = payload.sid as string | undefined;
+        const userId = payload.sub as string | undefined;
+        if (!sessionId || !userId) {
+            throw new AppError("Refresh token invalido", 401);
+        }
+
+        const sessao = await this.sessionRepo.findOne({
+            where: { id: sessionId },
+            relations: { usuario: true },
+        });
+
+        if (!sessao || sessao.revoked_at) throw new AppError("Sessao invalida", 401);
+        if (sessao.expires_at < new Date()) throw new AppError("Refresh token expirado", 401);
+        if (sessao.refresh_token_hash !== this.hashToken(refreshToken)) throw new AppError("Refresh token invalido", 401);
+        if (sessao.usuario.id_usuario !== userId) throw new AppError("Sessao invalida", 401);
+
+        const novoRefreshToken = this.gerarRefreshToken(sessao.id, sessao.usuario.id_usuario);
+        sessao.refresh_token_hash = this.hashToken(novoRefreshToken);
+        sessao.expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await this.sessionRepo.save(sessao);
+
+        const accessToken = this.gerarAccessToken(sessao.usuario);
+        return { accessToken, refreshToken: novoRefreshToken, usuario: sessao.usuario };
+    }
+
+    async logout(refreshToken: string) {
+        let payload: JwtPayload;
+        try {
+            payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as JwtPayload;
+        } catch {
+            throw new AppError("Refresh token invalido", 401);
+        }
+
+        const sessionId = payload.sid as string | undefined;
+        if (!sessionId) throw new AppError("Refresh token invalido", 401);
+
+        const sessao = await this.sessionRepo.findOne({ where: { id: sessionId } });
+
+        if (!sessao) return;
+
+        if (sessao.refresh_token_hash !== this.hashToken(refreshToken)) {
+            throw new AppError("Refresh token invalido", 401);
+        }
+
+        sessao.revoked_at = new Date();
+        await this.sessionRepo.save(sessao);
     }
 }

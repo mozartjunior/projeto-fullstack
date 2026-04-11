@@ -1,4 +1,6 @@
+import type { UUID } from "node:crypto";
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { uuid } from "zod";
 
 @Entity("equipamento")
 export class Equipamento {

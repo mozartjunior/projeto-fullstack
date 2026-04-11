@@ -1,71 +1,77 @@
 import type { Request, Response } from "express";
-import { appDataSource } from "../database/appDataSource.js";
 import { CreateEquipamentoService } from "../services/equipamento/CreateEquipamentoService.js";
-import { DeleteEquipamentoService } from "../services/equipamento/DeleteEquipamentoService.js";
 import { ListEquipamentoService } from "../services/equipamento/ListEquipamentosService.js";
+import { GetEquipamentoService } from "../services/equipamento/GetEquipamentoService.js";
 import { UpdateEquipamentoService } from "../services/equipamento/UpdateEquipamentoService.js";
+import { DesativarEquipamentoService } from "../services/equipamento/DesativarEquipamentoService.js";
 import { EquipamentoRepository } from "../repositories/EquipamentoRepository.js";
 
 export class EquipamentoController {
-    async create(req: Request, res: Response): Promise<Response>{
-        try{
-            const repository = new EquipamentoRepository();
-            const services = new CreateEquipamentoService(repository);
 
-            const result = await services.execute(req.body);
-
-            return res.status(201).json(result);
-        }catch (error: any){
-        return res.status(400).json({
-            message: error.message || "Erro ao criar equipamento",
-            });
-        }
+  async create(req: Request, res: Response): Promise<Response> {
+    try {
+      const repository = new EquipamentoRepository();
+      const service = new CreateEquipamentoService(repository);
+      const result = await service.execute(req.body);
+      return res.status(201).json(result);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message || "Erro ao criar equipamento",
+      });
     }
+  }
 
-    async getAll(req: Request, res: Response): Promise<Response>{
-        try{
-            const repository = new EquipamentoRepository();
-            const services = new ListEquipamentoService(repository);
-
-            const result = await services.execute();
-
-            return res.status(200).json(result);
-        }catch (error: any){
-            return res.status(400).json({
-                message: error.message || "Erro ao listar equipamentos",
-            });
-        }
+  async getAll(req: Request, res: Response): Promise<Response> {
+    try {
+      const repository = new EquipamentoRepository();
+      const service = new ListEquipamentoService(repository);
+      const result = await service.execute();
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message || "Erro ao listar equipamentos",
+      });
     }
+  }
 
-    async update(req: Request, res: Response): Promise<Response>{
-        try{
-            const repository = new EquipamentoRepository();
-            const services = new UpdateEquipamentoService(repository);
-
-            const result = await services.execute(req.params.codigo, req.body);
-
-            return res.status(200).json(result);
-        }catch (error: any){
-            return res.status(400).json({
-                message: error.message || "Erro ao atualizar equipamento",
-            });
-        }
+  async getById(req: Request<{ id: string }>, res: Response): Promise<Response> {
+    try {
+      const id = req.params.id;
+      const repository = new EquipamentoRepository();
+      const service = new GetEquipamentoService(repository);
+      const result = await service.execute(id);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message || "Erro ao buscar equipamento",
+      });
     }
+  }
 
-    async list(req: Request, res: Response): Promise<Response>{
-        try{
-            const equipamentoRepository = appDataSource.getRepository("Equipamento");
-            const equipamentos = await equipamentoRepository.find();
-            return res.json(equipamentos).status(200);
-            // const repository = new EquipamentoRepository();
-            // const services = new ListEquipamentoService(repository);
-            // const result = await services.execute();
-            return res.status(200).json(result);
-        }catch (error: any){
-            return res.status(400).json({
-                message: error.message || "Erro ao listar equipamentos",
-            });
-        }
+  async update(req: Request<{ id: string }>, res: Response): Promise<Response> {
+    try {
+      const repository = new EquipamentoRepository();
+      const service = new UpdateEquipamentoService(repository);
+      const result = await service.execute(req.params.codigo, req.body);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message || "Erro ao atualizar equipamento",
+      });
     }
+  }
 
+  async desativar(req: Request<{ id: string }>, res: Response): Promise<Response> {
+    try {
+      const id = (req.params.id);
+      const repository = new EquipamentoRepository();
+      const service = new DesativarEquipamentoService(repository);
+      const result = await service.execute(id);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message || "Erro ao desativar equipamento",
+      });
+    }
+  }
 }

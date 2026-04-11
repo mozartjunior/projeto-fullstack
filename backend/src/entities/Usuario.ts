@@ -1,8 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { Perfil } from "../types/Perfil.js";
-// import { Setor } from "./Setor.js";
-import { Requisicao } from "./Requisicao.js";
-import { Sessao } from "./Sessao.js";
+import { Setor } from "./Setor.js";
 
 
 @Entity("usuario")
@@ -23,17 +21,8 @@ export class Usuario{
     @Column({type:'enum', enum: Perfil, nullable: false})
     perfil!: Perfil;
 
-    // @ManyToOne(() => Setor, { nullable: false })
-    // @JoinColumn({ name: 'setor_id' })
-    // setor!: Setor;
-
-    // @OneToMany(() => Requisicao, (r) => r.solicitante)
-    // requisicoes_abertas!: Requisicao[]
-
-    @OneToMany(() => Sessao, (s) => s.usuario)
-    sessoes!: Sessao[]
-
-    @CreateDateColumn({ type: 'timestamptz' })
-    created_at!: Date
+    @ManyToOne(() => Setor, (setor) => setor.usuarios, { nullable: false })
+    @JoinColumn({ name: "id_setor" })
+    setor!: Setor;
 }
 

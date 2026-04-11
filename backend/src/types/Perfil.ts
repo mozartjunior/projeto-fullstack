@@ -1,8 +1,8 @@
 
 export enum Perfil{
     
-    GESTOR,
+    TECNICO,
     SUPERVISOR,
-    TECNICO
+    GESTOR
 
 }

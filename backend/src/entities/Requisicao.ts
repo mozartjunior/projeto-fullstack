@@ -1,1 +1,1 @@
-export class Requisicao {}
+export class Requsicao {}
