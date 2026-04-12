@@ -1,51 +1,79 @@
 import type { Request, Response } from "express";
-import type { AuthService } from "../services/AuthService.js";
+import { LoginService } from "../services/auth/LoginService.js";
+import { RefreshTokenService } from "../services/auth/RefreshTokenService.js";
+import { LogoutService } from "../services/auth/LogoutService.js";
+import { UsuarioRepository } from "../repositories/UsuarioRepository.js";
+import { SessaoRepository } from "../repositories/SessaoRepository.js";
+import { loginSchema, refreshSchema, logoutSchema } from "../dtos/AuthDTO.js";
 
-const sanitizeUser = (usuario: unknown) => {
-    if (!usuario || typeof usuario !== "object") return usuario;
-    const { senha_hash, ...rest } = usuario as { senha_hash?: string };
-    return rest;
-};
+export class AuthController {
 
-export default class AuthController {
-    private authService: AuthService;
-
-    constructor(authService: AuthService) {
-        this.authService = authService;
-    }
-
-    async login(req: Request, res: Response) {
-        const meta = {
-            ...(req.ip ? { ip: req.ip } : {}),
-            ...(req.headers["user-agent"]
-                ? { userAgent: String(req.headers["user-agent"]) }
-                : {})
-        };
-
-        const result = await this.authService.login(
-            req.body.email,
-            req.body.password,
-            meta
-        );
-
-        return res.status(200).json({
-            accessToken: result.accessToken,
-            refreshToken: result.refreshToken,
-            usuario: sanitizeUser(result.usuario)
+  async login(req: Request, res: Response): Promise<Response> {
+    try {
+      const parsed = loginSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          message: "Dados inválidos",
+          errors: parsed.error.format()
         });
-    }
+      }
 
-    async refresh(req: Request, res: Response) {
-        const result = await this.authService.refresh(req.body.refreshToken);
-        return res.status(200).json({
-            accessToken: result.accessToken,
-            refreshToken: result.refreshToken,
-            usuario: sanitizeUser(result.usuario)
+      const usuarioRepository = new UsuarioRepository();
+      const sessaoRepository = new SessaoRepository();
+      const service = new LoginService(usuarioRepository, sessaoRepository);
+
+      // Passa IP e User-Agent para registrar na sessão
+      const ip = req.ip;
+      const userAgent = req.headers["user-agent"];
+
+      const result = await service.execute(parsed.data, ip, userAgent);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(401).json({
+        message: error.message || "Erro ao realizar login",
+      });
+    }
+  }
+
+  async refresh(req: Request, res: Response): Promise<Response> {
+    try {
+      const parsed = refreshSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          message: "Dados inválidos",
+          errors: parsed.error.flatten().fieldErrors,
         });
-    }
+      }
 
-    async logout(req: Request, res: Response) {
-        await this.authService.logout(req.body.refreshToken);
-        return res.status(204).send();
+      const sessaoRepository = new SessaoRepository();
+      const service = new RefreshTokenService(sessaoRepository);
+      const result = await service.execute(parsed.data);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(401).json({
+        message: error.message || "Erro ao renovar token",
+      });
     }
+  }
+
+  async logout(req: Request, res: Response): Promise<Response> {
+    try {
+      const parsed = logoutSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          message: "Dados inválidos",
+          errors: parsed.error.flatten().fieldErrors,
+        });
+      }
+
+      const sessaoRepository = new SessaoRepository();
+      const service = new LogoutService(sessaoRepository);
+      const result = await service.execute(parsed.data);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(401).json({
+        message: error.message || "Erro ao realizar logout",
+      });
+    }
+  }
 }
