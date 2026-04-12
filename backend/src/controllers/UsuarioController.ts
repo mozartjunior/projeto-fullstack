@@ -1,39 +1,75 @@
 import type { Request, Response } from "express";
-import type { UsuarioService } from "../services/UsuarioService.js";
-import type { CreateUserSchemaDTO } from "../dtos/createUserSchemaDTO.js";
-import type { UpdateUserSchemaDTO } from "../UpdateUserSchemaDTO.js";
-import { AppError } from "../errors/AppError.js";
+import { CreateUsuarioService } from "../services/usuario/CreateUsuarioService.js";
+import { ListUsuarioService } from "../services/usuario/ListUsuarioService.js";
+import { GetUsuarioService } from "../services/usuario/GetUsuarioService.js";
+import { UsuarioRepository } from "../repositories/UsuarioRepository.js";
+import { SetorRepository } from "../repositories/SetorRepository.js";
+import { createUserSchema } from "../dtos/createUserSchemaDTO.js";
+import { DesativarUsuarioService } from "../services/usuario/DesativarUsuarioService.js";
 
-export default class UsuarioController {
-    private userService: UsuarioService;
+export class UsuarioController {
 
-    constructor(userService: UsuarioService) {
-        this.userService = userService;
+  async create(req: Request, res: Response): Promise<Response> {
+    try {
+      const parsed = createUserSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          message: "Dados inválidos",
+          errors: parsed.error.flatten().fieldErrors,
+        });
+      }
+
+      const usuarioRepository = new UsuarioRepository();
+      const setorRepository = new SetorRepository();
+      const service = new CreateUsuarioService(usuarioRepository, setorRepository);
+      const result = await service.execute(parsed.data);
+      return res.status(201).json(result);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message || "Erro ao criar usuário",
+      });
     }
+  }
 
-    async findAllUser(_req: Request, res: Response) {
-        const users = await this.userService.findAll();
-        return res.status(200).json(users);
+  async getAll(req: Request, res: Response): Promise<Response> {
+    try {
+      const repository = new UsuarioRepository();
+      const service = new ListUsuarioService(repository);
+      const result = await service.execute();
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message || "Erro ao listar usuários",
+      });
     }
+  }
 
-    async findUserById(req: Request, res: Response) {
-        const user = await this.userService.findById(req.params.id as string);
-        if (!user) {
-            throw new AppError("Usuario nao encontrado!", 404);
-        }
-        return res.status(200).json(user);
+  async getById(req: Request<{ id_usuario: string }>, res: Response): Promise<Response> {
+    try {
+      const { id_usuario } = req.params;
+      const repository = new UsuarioRepository();
+      const service = new GetUsuarioService(repository);
+      const result = await service.execute(id_usuario);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message || "Erro ao buscar usuário",
+      });
     }
+  }
 
-    async createUser(req: Request, res: Response) {
-        const user = await this.userService.createUsuario(req.body as CreateUserSchemaDTO);
-        return res.status(201).json(user);
+  async desativar(req: Request<{ id_usuario: string }>, res: Response): Promise<Response> {
+    try {
+      const { id_usuario } = req.params;
+      const repository = new UsuarioRepository();
+      const service = new DesativarUsuarioService(repository);
+      const result = await service.execute(id_usuario);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message || "Erro ao desativar usuário",
+      });
     }
+  }
 
-    async updateUser(req: Request, res: Response) {
-        const user = await this.userService.updateUsuario(
-            req.params.id as string,
-            req.body as UpdateUserSchemaDTO
-        );
-        return res.status(200).json(user);
-    }
 }

@@ -1,14 +1,8 @@
 import express from "express";
-import router from "./routes/index.js";
+import routes from "./routes/index.js";
 
 const app = express();
-const equipamentoRouter = router;
-
 app.use(express.json());
-app.use(equipamentoRouter);
-
-// app.get("/test", (req, res) => {
-//     res.json({ message: "Test endpoint" });
-// });
+app.use(routes);
 
 export default app;
