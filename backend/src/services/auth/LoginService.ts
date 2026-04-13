@@ -1,13 +1,3 @@
-// src/services/auth/LoginService.ts
-//
-// Fluxo do login:
-//   1. Busca usuário pelo email
-//   2. Compara senha com bcrypt
-//   3. Gera accessToken (JWT curto — 15min)
-//   4. Gera refreshToken (JWT longo — 7 dias)
-//   5. Salva hash do refreshToken na tabela sessao
-//   6. Retorna os dois tokens
-
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { LoginDTO } from "../../dtos/AuthDTO.js";
@@ -47,9 +37,10 @@ export class LoginService {
 
     // accessToken — curta duração (15 minutos)
     // Usado para autenticar cada requisição
+    console.log('JWT_ACCESS_SECRET:', process.env.JWT_ACCESS_SECRET);
     const accessToken = jwt.sign(
       payload,
-      process.env.JWT_SECRET as string,
+      process.env.JWT_ACCESS_SECRET as string,
       { expiresIn: "15m" }
     );
 

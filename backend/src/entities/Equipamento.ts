@@ -5,8 +5,8 @@ import { uuid } from "zod";
 @Entity("equipamento")
 export class Equipamento {
 
-    @PrimaryGeneratedColumn("uuid")
-    id!: string;
+    @PrimaryGeneratedColumn()
+    id!: number;
 
     @Column({ type: 'text', unique: true })
     codigo!: string;
