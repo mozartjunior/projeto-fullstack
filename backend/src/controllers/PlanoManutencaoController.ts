@@ -6,6 +6,8 @@ import { UpdatePlanoManutencaoService } from "../services/manutencao/UpdatePlano
 import { DesativarPlanoManutencaoService } from "../services/manutencao/DesativarPlanoManutencao.js";
 import { PlanoManutencaoRepository } from "../repositories/PlanoManutencaoRepository.js";
 import { EquipamentoRepository } from "../repositories/EquipamentoRepository.js";
+import { ListExecucaoByPlanoService } from "../services/manutencao/LisExecucaobyPlanoService.js";
+import { ExecucaoRepository } from "../repositories/ExecucaoRepository.js";
 
 export class PlanoManutencaoController {
 
@@ -63,6 +65,18 @@ export class PlanoManutencaoController {
       const id = Number(req.params.id);
       const planoRepository = new PlanoManutencaoRepository();
       const service = new DesativarPlanoManutencaoService(planoRepository);
+      const result = await service.execute(id);
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async historico(req: Request<{ id: string }>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      const execucaoRepository = new ExecucaoRepository();
+      const service = new ListExecucaoByPlanoService(execucaoRepository);
       const result = await service.execute(id);
       res.status(200).json(result);
     } catch (error) {
