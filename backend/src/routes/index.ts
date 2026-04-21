@@ -1,5 +1,3 @@
-// src/routes/index.ts
-
 import { Router } from "express";
 import { EquipamentoController } from "../controllers/EquipamentoController.js";
 import { SetorController } from "../controllers/SetorController.js";
