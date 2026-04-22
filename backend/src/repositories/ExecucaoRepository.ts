@@ -17,7 +17,7 @@ export class ExecucaoRepository {
     const execucao = this.repo.create({
       plano:        { id: data.plano_id },
       tecnico:      { id: data.tecnico_id },
-      data_execucao: data.data_execucao,
+      dataExecucao: data.data_execucao,
       status:        data.status,
       conformidade:  data.conformidade,
       observacoes:   data.observacoes,
@@ -36,7 +36,7 @@ export class ExecucaoRepository {
     return this.repo.find({
       where: { plano: { id: plano_id } },
       relations: ["tecnico", "plano"],
-      order: { data_execucao: "DESC" },
+      order: { dataExecucao: "DESC" },
     });
   }
 
@@ -48,8 +48,8 @@ export class ExecucaoRepository {
       .createQueryBuilder("e")
       .leftJoinAndSelect("e.plano", "p")
       .leftJoinAndSelect("p.equipamento", "eq")
-      .where("e.data_execucao BETWEEN :inicio AND :fim", { inicio, fim })
-      .orderBy("e.data_execucao", "DESC")
+      .where("e.dataExecucao BETWEEN :inicio AND :fim", { inicio, fim })
+      .orderBy("e.dataExecucao", "DESC")
       .getMany();
   }
 
@@ -59,14 +59,15 @@ export class ExecucaoRepository {
     const fim    = new Date(agora.getFullYear(), agora.getMonth() + 1, 0, 23, 59, 59);
     const total = await this.repo
       .createQueryBuilder("e")
-      .where("e.data_execucao BETWEEN :inicio AND :fim", { inicio, fim })
+      .where("e.dataExecucao BETWEEN :inicio AND :fim", { inicio, fim })
       .getCount();
     const realizadas = await this.repo
       .createQueryBuilder("e")
-      .where("e.data_execucao BETWEEN :inicio AND :fim", { inicio, fim })
+      .where("e.dataExecucao BETWEEN :inicio AND :fim", { inicio, fim })
       .andWhere("e.conformidade = true")
       .andWhere("e.status = 'realizada'")
       .getCount();
+      
     const percentual = total > 0 ? Math.round((realizadas / total) * 100) : 0;
     return { realizadas, total, percentual };
   }

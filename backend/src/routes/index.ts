@@ -78,7 +78,6 @@ routes.get("/planos/:id/historico", ensureAuth, (req, res, next) => planoControl
 // Todos autenticados podem criar e ver detalhes de execução
 routes.post("/execucoes", ensureAuth, (req, res, next) => execucaoController.create(req, res, next));
 routes.get("/execucoes/:id", ensureAuth, (req, res, next) => execucaoController.getById(req, res, next));
-
 routes.get("/calendario", ensureAuth, (req, res, next) => calendarioController.getCalendario(req, res, next));
 routes.get("/dashboard", ensureAuth, (req, res, next) => dashboardController.getDashboard(req, res, next));
 

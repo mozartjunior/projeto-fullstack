@@ -12,6 +12,10 @@ export enum StatusExecucao {
 export class ExecucaoManutencao{
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @ManyToOne(() => PlanoManutencao, { nullable: false })
+    @JoinColumn({ name: "plano_id" })
+    plano!: PlanoManutencao;
     
 @ManyToOne(() => Usuario, {nullable: true})
 @JoinColumn({ name: "tecnico_id"})

@@ -7,7 +7,7 @@ import { Equipamento } from '../models/equipamento.model';
   providedIn: 'root'
 })
 export class EquipamentosService {
-  private readonly API = 'http://localhost:6060/equipamentos'; // URL do seu Docker
+  private readonly API = 'http://localhost:6060/equipamentos';
   constructor(private http: HttpClient) {}
 
   listarTodos(): Observable<Equipamento[]> {
