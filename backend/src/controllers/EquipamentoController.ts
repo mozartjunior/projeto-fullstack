@@ -52,7 +52,7 @@ export class EquipamentoController {
     try {
       const repository = new EquipamentoRepository();
       const service = new UpdateEquipamentoService(repository);
-      const result = await service.execute(req.params.codigo, req.body);
+      const result = await service.execute(req.params.id, req.body);
       return res.status(200).json(result);
     } catch (error: any) {
       return res.status(400).json({

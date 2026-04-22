@@ -1,0 +1,50 @@
+<div class="min-h-screen bg-[#f4f7f9] flex flex-col items-center justify-center p-4">
+  <div class="mb-8 text-center">
+    <div class="bg-[#001a33] w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-3 shadow-md">
+      <span class="text-white text-3xl">⚙️</span>
+    </div>
+    <h1 class="text-2xl font-bold text-[#001a33] tracking-tighter">PREVENTIVAPIM</h1>
+    <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em]">Industrial Systems & Monitoring</p>
+  </div>
+
+  <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-[400px] border-t-4 border-[#001a33]">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
+      
+      <div>
+        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1.5">Email</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-sm">👤</span>
+          <input type="text" formControlName="email" placeholder="Email corporativo"
+            class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded text-sm outline-none transition-all duration-300 focus:border-industrial-blue focus:ring-4 focus:ring-industrial-blue/10">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1.5">Senha de Acesso</label>
+        <div class="relative flex items-center">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-sm">🔒</span>
+          <input [type]="showPassword ? 'text' : 'password'" 
+            formControlName="password" 
+            placeholder="••••••••"
+            class="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded text-sm focus:border-[#001a33] outline-none transition-colors">
+
+          <button type="button" 
+            (click)="showPassword = !showPassword"
+            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
+
+            <img [src]="showPassword 
+              ? 'https://unpkg.com/lucide-static@0.469.0/icons/eye-off.svg' 
+              : 'https://unpkg.com/lucide-static@0.469.0/icons/eye.svg'"
+                alt="Toggle Password"
+                class="w-4 h-4 opacity-30 hover:opacity-100 transition-opacity">
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" 
+        class="w-full bg-[#001a33] text-white py-3 rounded font-bold text-xs uppercase tracking-widest hover:bg-slate-900 transition-all flex items-center justify-center gap-2">
+        Entrar
+      </button>
+    </form>
+  </div>
+</div>

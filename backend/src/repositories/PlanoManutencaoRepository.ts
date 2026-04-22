@@ -72,4 +72,24 @@ export class PlanoManutencaoRepository {
       relations: ["equipamento", "tecnico"],
     });
   }
+
+  async countProximos(dias: number): Promise<number> {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    
+    const limite = new Date(hoje);
+    limite.setDate(hoje.getDate() + dias);
+    limite.setHours(23, 59, 59, 999); // Garante que vai até o final do dia limite
+
+    return this.repository.count({
+      where: { 
+        ativo: true, 
+        proxima_em: Between(hoje, limite) 
+      },
+    });
+  }
+
+  async updateProximaEm(id: number, novaData: Date) {
+    await this.repository.update({ id }, { proxima_em: novaData });
+  }
 }

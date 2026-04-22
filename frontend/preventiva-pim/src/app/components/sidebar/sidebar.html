@@ -1,0 +1,81 @@
+<aside class="w-64 bg-[#001a33] text-white flex flex-col h-screen shadow-2xl">
+  
+  <div class="p-6 flex items-center gap-3 overflow-hidden whitespace-nowrap">
+    <div class="bg-blue-600/20 p-2 rounded-lg border border-blue-500/30">
+      <img src="https://unpkg.com/lucide-static@latest/icons/settings.svg" class="w-6 h-6 invert">
+    </div>
+    <span *ngIf="!isCollapsed" class="font-bold text-xl tracking-tight">PreventivaPIM</span>
+  </div>
+
+  <nav class="flex-1 px-4 py-4 space-y-6 overflow-y-auto">
+    
+    <div>
+      <p class="text-[10px] font-bold text-gray-500 uppercase px-4 mb-2 tracking-widest">Monitoramento</p>
+      <a routerLink="/dashboard" 
+         routerLinkActive="bg-white/10 border-l-4 border-blue-400 text-white"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-gray-400 hover:text-white transition-all group">
+        <img src="https://unpkg.com/lucide-static@latest/icons/layout-dashboard.svg" class="w-4 h-4 invert opacity-70 group-hover:opacity-100">
+        Dashboard
+      </a>
+    </div>
+
+    <div>
+      <p class="text-[10px] font-bold text-gray-500 uppercase px-4 mb-2 tracking-widest">Operacional</p>
+      <div class="space-y-1">
+        <a routerLink="/assets" 
+           routerLinkActive="bg-white/10 border-l-4 border-blue-400 text-white"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-gray-400 hover:text-white transition-all group">
+          <img src="https://unpkg.com/lucide-static@latest/icons/database.svg" class="w-4 h-4 invert opacity-70 group-hover:opacity-100">
+          Equipamentos
+        </a>
+        <a routerLink="/planos" 
+           routerLinkActive="bg-white/10 border-l-4 border-blue-400 text-white"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-gray-400 hover:text-white transition-all group">
+          <img src="https://unpkg.com/lucide-static@latest/icons/clipboard-list.svg" class="w-4 h-4 invert opacity-70 group-hover:opacity-100">
+          Planos de Manutenção
+        </a>
+        <a routerLink="/calendar" 
+           routerLinkActive="bg-white/10 border-l-4 border-blue-400 text-white"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-gray-400 hover:text-white transition-all group">
+          <img src="https://unpkg.com/lucide-static@latest/icons/calendar.svg" class="w-4 h-4 invert opacity-70 group-hover:opacity-100">
+          Cronograma
+        </a>
+      </div>
+    </div>
+
+    <div class="pt-4 border-t border-white/5">
+      <p class="text-[10px] font-bold text-blue-400 uppercase px-4 mb-2 tracking-widest">Controle Master</p>
+      <div class="space-y-1">
+        <a routerLink="/users" 
+           routerLinkActive="bg-white/10 border-l-4 border-blue-400 text-white"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-gray-400 hover:text-white transition-all group">
+          <img src="https://unpkg.com/lucide-static@latest/icons/users.svg" class="w-4 h-4 invert opacity-70 group-hover:opacity-100">
+          Gestão de Usuários
+        </a>
+        <a routerLink="/reports" 
+           routerLinkActive="bg-white/10 border-l-4 border-blue-400 text-white"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-gray-400 hover:text-white transition-all group">
+          <img src="https://unpkg.com/lucide-static@latest/icons/file-text.svg" class="w-4 h-4 invert opacity-70 group-hover:opacity-100">
+          Relatórios
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="p-4 bg-[#001429] border-t border-white/5">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full border border-blue-400/30 overflow-hidden bg-gray-700">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar">
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xs font-bold truncate w-24">Mozart</span>
+          <span class="text-[9px] text-blue-400 uppercase font-black">Admin / Gestor</span>
+        </div>
+      </div>
+      <button routerLink="/login" class="p-2 hover:bg-red-500/10 rounded-lg group transition-colors">
+        <img src="https://unpkg.com/lucide-static@latest/icons/log-out.svg" class="w-4 h-4 invert opacity-40 group-hover:opacity-100">
+      </button>
+    </div>
+  </div>
+</aside>
