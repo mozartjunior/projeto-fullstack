@@ -1,0 +1,54 @@
+<div class="space-y-8 animate-in fade-in duration-500">
+  
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-[#001a33]">Gestão de Ativos</h1>
+      <p class="text-sm text-gray-500">Gerenciamento operacional de 142 equipamentos em 4 setores.</p>
+    </div>
+    <button routerLink="/assets/novo" 
+            class="flex items-center gap-2 bg-[#001a33] text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-800 transition-all shadow-lg">
+      <img src="https://unpkg.com/lucide-static@latest/icons/plus.svg" class="w-4 h-4 invert">
+      Add Equipment
+    </button>
+  </div>
+
+  <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <input type="text" placeholder="Search ID or Name..." class="border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+    <select class="border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none">
+      <option>All Sectors</option>
+    </select>
+    <select class="border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none">
+      <option>Any Status</option>
+    </select>
+    <button class="bg-blue-50 text-blue-600 font-bold rounded-lg px-4 py-2 text-sm hover:bg-blue-100 transition-colors">
+      Aplicar Filtros
+    </button>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <table class="min-w-full">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nome</th>
+          <th>Localização</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of equipamentos; track item.id) {
+          <tr>
+            <td>{{ item.codigo }}</td>
+            <td>{{ item.nome }}</td>
+            <td>{{ item.localizacao }}</td>
+            <td>{{ item.ativo ? 'Ativo' : 'Inativo' }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4">Nenhum equipamento encontrado no banco.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+/* src/app/pages/login/login.component.css */
+
+:host {
+  display: block;
+  height: 100vh;
+}
+
+/* Caso queira um efeito de foco suave nos inputs que o Tailwind padrão não tenha */
+input:focus {
+  box-shadow: 0 0 0 3px rgba(0, 26, 51, 0.1);
+}
+
+/* Estilo para a barra de rolagem se o card for muito grande em telas pequenas */
+.login-container::-webkit-scrollbar {
+  width: 5px;
+}

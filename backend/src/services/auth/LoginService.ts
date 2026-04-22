@@ -10,7 +10,7 @@ export class LoginService {
   ) {}
 
   async execute(data: LoginDTO, ip?: string, userAgent?: string) {
-
+    
     // Busca usuário pelo email — inclui senha_hash
     const usuario = await this.usuarioRepository.findByEmail(data.email);
     if (!usuario) {

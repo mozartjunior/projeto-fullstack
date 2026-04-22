@@ -1,0 +1,102 @@
+<div class="p-8 w-full bg-industrial-light min-h-screen font-sans box-border">
+  
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-industrial-blue mb-1">Dashboard de Manutenção</h1>
+      <p class="text-gray-500 text-sm">Visão geral das manutenções e métricas</p>
+    </div>
+    <div class="flex gap-3">
+      <span class="px-3 py-1 bg-green-50 text-green-700 text-xs rounded-full font-semibold border border-green-200 shadow-sm">Supervisor</span>
+      <span class="px-3 py-1 bg-purple-50 text-purple-700 text-xs rounded-full font-semibold border border-purple-200 shadow-sm">Gestor</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex justify-between items-start mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Manutenções em Atraso</h3>
+        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-red-600 mb-1">{{ resumo?.atrasos || 0 }}</p>
+        <p class="text-xs text-gray-400">Requerem atenção imediata</p>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex justify-between items-start mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Próximos 7 Dias</h3>
+        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-blue-600 mb-1">{{ resumo?.proximos || 0 }}</p>
+        <p class="text-xs text-gray-400">Manutenções programadas</p>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex justify-between items-start mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Conformidade do Mês</h3>
+        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-green-600 mb-1">{{ resumo?.conformidadePercentual || 0 }}%</p>
+        <p class="text-xs text-gray-400">{{ resumo?.conformidadeRealizadas || 0 }} de {{ resumo?.conformidadeTotal || 0 }} no prazo</p>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex justify-between items-start mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Execuções no Mês</h3>
+        <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-purple-600 mb-1">{{ resumo?.execucoes || 0 }}</p>
+        <p class="text-xs text-gray-400">Registros de execução</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="p-6 border-b border-gray-100">
+      <h2 class="text-xl font-bold text-industrial-blue">Manutenções Atrasadas</h2>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse whitespace-nowrap">
+        <thead>
+          <tr class="bg-gray-50/50 text-xs uppercase tracking-wider text-gray-500 border-b border-gray-100">
+            <th class="py-4 px-6 font-semibold">Plano de Manutenção</th>
+            <th class="py-4 px-6 font-semibold">Equipamento</th>
+            <th class="py-4 px-6 font-semibold">Data Prevista</th>
+            <th class="py-4 px-6 font-semibold">Dias de Atraso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of manutencoesAtrasadas" class="border-b border-gray-50 hover:bg-industrial-light/50 transition-colors duration-200">
+            
+            <td class="py-4 px-6 text-industrial-blue font-medium">{{ item.plano }}</td>
+            <td class="py-4 px-6 text-gray-600">{{ item.equipamento }}</td>
+            
+            <td class="py-4 px-6 text-gray-600">{{ item.data_prevista | date:'dd/MM/yyyy' }}</td>
+            
+            <td class="py-4 px-6">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-full border border-red-100">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                {{ item.dias_atraso }} dias
+              </span>
+            </td>
+            
+          </tr>
+          
+          <tr *ngIf="manutencoesAtrasadas.length === 0">
+            <td colspan="4" class="py-8 text-center text-gray-400">Nenhuma manutenção atrasada encontrada no momento.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
