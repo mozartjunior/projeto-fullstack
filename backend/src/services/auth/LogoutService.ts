@@ -7,7 +7,7 @@
 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import type { LogoutDTO } from "../../dtos/AuthDTO.js";
+import type { LogoutDTO } from "../../dtos/authDTO.js";
 
 export class LogoutService {
 

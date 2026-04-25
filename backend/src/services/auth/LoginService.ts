@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import type { LoginDTO } from "../../dtos/AuthDTO.js";
+import type { LoginDTO } from "../../dtos/authDTO.js";
 
 export class LoginService {
 

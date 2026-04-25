@@ -8,11 +8,10 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './login.html', // Verifique se o nome é exatamente login.html
-  styleUrl: './login.css'       // Verifique se o nome é exatamente login.css
+  templateUrl: './login.html',
+  styleUrl: './login.css'
 })
-export class LoginComponent { // Verifique se está 'LoginComponent' aqui
-  // 1. Declarando as variáveis que o HTML está pedindo:
+export class LoginComponent { 
   loading = false;
   error = '';
   loginForm: FormGroup;
@@ -34,11 +33,19 @@ export class LoginComponent { // Verifique se está 'LoginComponent' aqui
   // 3. Criando a função que o botão do HTML chama:
   onSubmit() {
     if (this.loginForm.valid) {
-      // this.loading = true; // Variável para mostrar o spinner
-      // this.error='';
+      this.loading = true; // Variável para mostrar o spinner
+      this.error='';
       
       this.authService.login(this.loginForm.value).subscribe({
-        next: () => {
+        next: (response: any) => {
+          if (response.access_token) {
+            localStorage.setItem('accessToken', response.access_token);
+          }
+          if (response.user) {
+            localStorage.setItem('usuario', JSON.stringify(response.user));
+          } else if (response.usuario) {
+            localStorage.setItem('usuario', JSON.stringify(response.usuario));
+          }
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {

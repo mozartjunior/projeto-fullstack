@@ -69,11 +69,11 @@
           <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar">
         </div>
         <div class="flex flex-col">
-          <span class="text-xs font-bold truncate w-24">Mozart</span>
-          <span class="text-[9px] text-blue-400 uppercase font-black">Admin / Gestor</span>
+          <span class="text-xs font-bold truncate w-24">{{ usuarioLogado?.nome || 'Usuário' }}</span>
+          <span class="text-[9px] text-blue-400 uppercase font-black">{{ usuarioLogado?.perfil || 'Perfil' }}</span>
         </div>
       </div>
-      <button routerLink="/login" class="p-2 hover:bg-red-500/10 rounded-lg group transition-colors">
+      <button (click)="logout()" class="p-2 hover:bg-red-500/10 rounded-lg group transition-colors">
         <img src="https://unpkg.com/lucide-static@latest/icons/log-out.svg" class="w-4 h-4 invert opacity-40 group-hover:opacity-100">
       </button>
     </div>
