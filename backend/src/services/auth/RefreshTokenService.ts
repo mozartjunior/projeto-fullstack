@@ -1,15 +1,6 @@
-// src/services/auth/RefreshTokenService.ts
-//
-// Fluxo do refresh:
-//   1. Verifica se o refreshToken JWT é válido
-//   2. Busca sessão no banco pelo hash
-//   3. Verifica se a sessão não foi revogada nem expirou
-//   4. Gera novo accessToken
-//   5. Retorna o novo accessToken
-
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import type { RefreshDTO } from "../../dtos/AuthDTO.js";
+import type { RefreshDTO } from "../../dtos/authDTO.js";
 
 export class RefreshTokenService {
 
