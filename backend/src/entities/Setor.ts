@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from "typeorm";
 import { NomeSetor } from "../types/NomeSetor.js";
 import { Usuario } from "./Usuario.js";
+import { Equipamento } from "./Equipamento.js";
 
 @Entity("setor")
 export class Setor {
@@ -23,4 +24,8 @@ export class Setor {
   // Um setor pode ter muitos usuários
   @OneToMany(() => Usuario, (usuario) => usuario.setor)
   usuarios?: Usuario[];
+
+  // Um setor pode ter muitos equipamentos
+  @OneToMany(() => Equipamento, (equipamento) => equipamento.setor)
+  equipamentos?: Equipamento[];
 }

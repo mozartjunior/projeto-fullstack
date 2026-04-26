@@ -1,18 +1,32 @@
 import { Equipamento } from './equipamento.model';
 import { Usuario } from './usuario.model';
 
-export interface PlanoManutencao {
-  id?: number; // Opcional porque no cadastro o ID ainda não existe
-  titulo: string;
-  descricao?: string | null;
-  periodicidade_dias: number;
-  proxima_em: Date | string; // Aceita Date ou a String que vem do JSON (YYYY-MM-DD)
+// Se você já tiver um arquivo equipamento.model.ts, importe-o aqui.
+// Caso contrário, podemos definir a estrutura básica necessária.
+export interface EquipamentoResumido {
+  id: number;
+  codigo: string;
+  nome: string;
+  tipo: string;
+  fabricante?: string;
+  modelo?: string;
   ativo: boolean;
-  
-  // No Angular, podemos receber o objeto completo ou apenas o ID
-  equipamento?: Equipamento; 
-  equipamento_id?: number; 
+}
 
-  tecnico?: Usuario | null;
-  tecnico_id?: number | null;
+export interface PlanoManutencao {
+  id?: number;
+  titulo: string;
+  descricao: string | null;
+  periodicidade_dias: number;
+  proxima_em: string | Date;
+  ativo: boolean;
+
+  // IDs das chaves estrangeiras (essenciais para formulários/POST)
+  equipamento_id: number;
+  tecnico_id: number | string | null; // Ajustado conforme o tipo do ID do seu Usuario
+
+  // Objetos completos (essenciais para listagens/tabelas)
+  // O backend envia esses dados quando usamos o relations: ["equipamento", "tecnico"]
+  equipamento: EquipamentoResumido; 
+  tecnico: Usuario | null;
 }

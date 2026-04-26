@@ -48,7 +48,7 @@ routes.use(ensureAuth);
 routes.get("/equipamentos", ensureAuth, (req, res) => equipamentoController.getAll(req, res));
 routes.get("/equipamentos/:id", ensureAuth, (req, res) => equipamentoController.getById(req, res));
 // Só GESTOR e SUPERVISOR podem criar/editar/desativar
-routes.post("/assets", ensureAuth, ensurePerfil(Perfil.GESTOR, Perfil.SUPERVISOR), (req, res) => equipamentoController.create(req, res));
+routes.post("/equipamentos", ensureAuth, ensurePerfil(Perfil.GESTOR, Perfil.SUPERVISOR), (req, res) => equipamentoController.create(req, res));
 routes.put("/equipamentos/:codigo", ensureAuth, ensurePerfil(Perfil.GESTOR, Perfil.SUPERVISOR), (req, res) => equipamentoController.update(req, res));
 routes.patch("/equipamentos/:id/desativar", ensureAuth, ensurePerfil(Perfil.GESTOR), (req, res) => equipamentoController.desativar(req, res));
 

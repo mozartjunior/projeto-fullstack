@@ -6,7 +6,7 @@ export class EquipamentoRepository {
   private repository = appDataSource.getRepository(Equipamento);
 
   async findByCodigo(codigo: string) {
-    return this.repository.findOne({ where: { codigo } });
+    return await this.repository.findOne({ where: { codigo }, relations: ["setor"] });
   }
 
   async create(data: any) {
@@ -25,10 +25,16 @@ export class EquipamentoRepository {
   }
 
   async findAll() {
-    return this.repository.find();
+    return this.repository.find({
+      relations: ["setor"],
+    });
   }
 
-  async findById(id: string) {
-    return this.repository.findOne({ where: { id } });
+  async findById(id: number) {
+    return await this.repository.findOne({ where: { id }, relations: ["setor"] });
+  }
+
+  async save(equipamento: any){
+    return await this.repository.save(equipamento)
   }
 }

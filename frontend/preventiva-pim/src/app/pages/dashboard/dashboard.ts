@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
@@ -10,20 +10,24 @@ import { DashboardService } from '../../services/dashboard.service';
   styleUrl: './dashboard.css'
 })
 export class DashboardManutencaoComponent implements OnInit {
-  // Criamos um objeto para facilitar o uso no HTML
   resumo: any = {};
   manutencoesAtrasadas: any[] = [];
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.carregarDados();
+    if (isPlatformBrowser(this.platformId)){
+      this.carregarDados();
+    }  
   }
 
   carregarDados(): void {
     this.dashboardService.getResumoDashboard().subscribe({
       next: (dados) => {
-        // Mapeando exatamente as chaves do seu DashboardController
         this.resumo = {
           atrasos: dados.manutencoes_atrasadas,
           proximos: dados.previstos_7_dias,
@@ -34,6 +38,7 @@ export class DashboardManutencaoComponent implements OnInit {
         };
         
         this.manutencoesAtrasadas = dados.lista_atrasadas;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erro ao buscar dados da API', err);
