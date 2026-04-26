@@ -9,8 +9,8 @@ export class CreateEquipamentoService {
 
   async execute(data: CreateEquipamentoDTO) {
 
-    if (!data.codigo || !data.nome || !data.tipo || !data.localizacao) {
-      throw new Error("Campos obrigatórios: codigo, nome, tipo e localizacao.");
+    if (!data.codigo || !data.nome || !data.tipo || !data.id_setor) {
+      throw new Error("Campos obrigatórios: codigo, nome, tipo e id_setor.");
     }
 
     const codigoNormalizado = normalizeCodigo(data.codigo);
@@ -24,7 +24,7 @@ export class CreateEquipamentoService {
       codigo: codigoNormalizado,
       nome: data.nome,
       tipo: data.tipo,
-      localizacao: data.localizacao,
+      id_setor: data.id_setor,
       fabricante: data.fabricante || null,
       modelo: data.modelo || null,
       ativo: data.ativo ?? true,

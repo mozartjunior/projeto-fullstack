@@ -9,17 +9,30 @@ import { EquipamentoRepository } from "../repositories/EquipamentoRepository.js"
 export class EquipamentoController {
 
   async create(req: Request, res: Response): Promise<Response> {
-    try {
-      const repository = new EquipamentoRepository();
-      const service = new CreateEquipamentoService(repository);
-      const result = await service.execute(req.body);
-      return res.status(201).json(result);
-    } catch (error: any) {
-      return res.status(400).json({
-        message: error.message || "Erro ao criar equipamento",
-      });
-    }
+  try {
+    const { codigo, nome, tipo, id_setor, fabricante, modelo, ativo } = req.body;
+    
+    const repository = new EquipamentoRepository();
+    const service = new CreateEquipamentoService(repository);
+    
+    // Passando os dados explicitamente
+    const result = await service.execute({
+      codigo, 
+      nome, 
+      tipo, 
+      id_setor, 
+      fabricante, 
+      modelo, 
+      ativo
+    });
+
+    return res.status(201).json(result);
+  } catch (error: any) {
+    return res.status(400).json({
+      message: error.message || "Erro ao criar equipamento",
+    });
   }
+}
 
   async getAll(req: Request, res: Response): Promise<Response> {
     try {
@@ -48,11 +61,11 @@ export class EquipamentoController {
     }
   }
 
-  async update(req: Request<{ id: string }>, res: Response): Promise<Response> {
+  async update(req: Request<{ codigo: string }>, res: Response): Promise<Response> {
     try {
       const repository = new EquipamentoRepository();
       const service = new UpdateEquipamentoService(repository);
-      const result = await service.execute(req.params.id, req.body);
+      const result = await service.execute(req.params.codigo, req.body);
       return res.status(200).json(result);
     } catch (error: any) {
       return res.status(400).json({

@@ -2,6 +2,6 @@ export interface Usuario {
   id: number;
   nome: string;
   email: string;
-  role: 'ADMIN' | 'TECNICO' | 'SUPERVISOR'; // Seus perfis de acesso
+  role: 'ADMIN' | 'TECNICO' | 'SUPERVISOR' | 'GESTOR'; // Seus perfis de acesso
   foto_url?: string;
 }

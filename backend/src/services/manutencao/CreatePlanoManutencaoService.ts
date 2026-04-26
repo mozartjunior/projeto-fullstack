@@ -9,7 +9,7 @@ export class CreatePlanoManutencaoService {
 
   async execute(data: CreatePlanoManutencaoDTO) {
 
-    // Verifica se o equipamento existe e está ativo
+    // 1. Verifica se o equipamento existe e está ativo
     const equipamento = await this.equipamentoRepository.findById(data.equipamento_id);
     if (!equipamento) {
       throw new Error(`Equipamento #${data.equipamento_id} não encontrado.`);
@@ -18,19 +18,19 @@ export class CreatePlanoManutencaoService {
       throw new Error(`Equipamento #${data.equipamento_id} está desativado.`);
     }
 
-    // Converte e valida a data da primeira execução
+    // 2. Converte e valida a data da primeira execução
     const proxima_em = new Date(data.proxima_em);
     if (isNaN(proxima_em.getTime())) {
       throw new Error(`Data inválida: "${data.proxima_em}". Use o formato YYYY-MM-DD.`);
     }
 
     return this.planoRepository.create({
-      equipamento: { id: data.equipamento_id },
+      equipamento_id: data.equipamento_id,
       titulo: data.titulo,
       descricao: data.descricao || null,
       periodicidade_dias: data.periodicidade_dias,
-      tecnico: data.tecnico_id ? { id_usuario: data.tecnico_id } : null,
-      proxima_em,
+      tecnico_id: data.tecnico_id || null,
+      proxima_em: proxima_em,
       ativo: true,
     });
   }

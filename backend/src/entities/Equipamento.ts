@@ -1,6 +1,7 @@
 import type { UUID } from "node:crypto";
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { uuid } from "zod";
+import { Setor } from "./Setor.js";
 
 @Entity("equipamento")
 export class Equipamento {
@@ -17,8 +18,12 @@ export class Equipamento {
     @Column({ type: 'text' })
     tipo!: string;
 
-    @Column({ type: 'text' })
-    localizacao!: string;
+    @ManyToOne(() => Setor, setor => setor.equipamentos)
+    @JoinColumn({ name: 'id_setor' })
+    setor!: Setor;
+
+    @Column({ name: 'id_setor', type: 'uuid', nullable: true })
+    id_setor?: string;
 
     @Column({ type: 'text', nullable: true })
     fabricante?: string;

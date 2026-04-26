@@ -8,12 +8,13 @@ import { EquipamentosService } from '../../../services/equipamento.service';
   selector: 'app-asset-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './asset-form.html',
+  templateUrl: './asset-form.html'
 })
 export class AssetForm implements OnInit {
   assetForm!: FormGroup;
   isEditMode = false;
   assetId?: number;
+  loading = false; // Adicionado para o botão de salvar
 
   constructor(
     private fb: FormBuilder,
@@ -25,7 +26,6 @@ export class AssetForm implements OnInit {
   }
 
   ngOnInit(): void {
-    // Verifica se estamos editando um equipamento existente
     this.assetId = this.route.snapshot.params['id'];
     if (this.assetId) {
       this.isEditMode = true;
@@ -41,30 +41,48 @@ export class AssetForm implements OnInit {
       localizacao: ['', [Validators.required]],
       fabricante: [''],
       modelo: [''],
-      ativo: [true]
+      ativo: [true] // Já nasce como true (Ligado)
     });
   }
 
   carregarDadosEquipamento(id: number) {
-    console.log('Buscando dados do equipamento ID:', id);
-    // Aqui você chamará seu service futuramente
-    // this.assetForm.patchValue(dadosDoBanco);
+    // Busca no banco e preenche o form automaticamente!
+    this.equipamentoService.buscarPorId(id).subscribe({
+      next: (dados) => {
+        this.assetForm.patchValue(dados);
+      },
+      error: (err) => console.error('Erro ao buscar equipamento', err)
+    });
+  }
+
+  voltar() {
+    this.router.navigate(['/assets']);
   }
 
   onSubmit() {
-    if (this.assetForm.valid) {
-      const dados = this.assetForm.value;
-      
-      this.equipamentoService.salvar(dados).subscribe({
-        next: (response: any) => {
-          console.log('Equipamento salvo com sucesso:', response);
-          // Aqui enviaremos para o backend via service
-          this.router.navigate(['/assets']);
-        },
-        error: (err) => {
-          console.error('Erro ao salvar no banco', err)
-        }
-      });
+    // Marca todos os campos como tocados para mostrar os erros (bordas vermelhas) se o usuário tentar salvar vazio
+    if (this.assetForm.invalid) {
+      this.assetForm.markAllAsTouched();
+      return;
     }
+
+    this.loading = true;
+    const dados = this.assetForm.value;
+    
+    // Se for edição, talvez você precise passar o ID (ajuste conforme o seu service)
+    if (this.isEditMode) {
+       dados.id = this.assetId; 
+    }
+
+    this.equipamentoService.salvar(dados).subscribe({
+      next: () => {
+        this.loading = false;
+        this.router.navigate(['/assets']);
+      },
+      error: (err) => {
+        console.error('Erro ao salvar', err);
+        this.loading = false;
+      }
+    });
   }
 }

@@ -1,54 +1,140 @@
-<div class="space-y-8 animate-in fade-in duration-500">
+<div class="p-8 bg-slate-50 min-h-screen text-gray-800">
   
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div class="flex justify-between items-start mb-8">
     <div>
-      <h1 class="text-3xl font-bold text-[#001a33]">Gestão de Ativos</h1>
-      <p class="text-sm text-gray-500">Gerenciamento operacional de 142 equipamentos em 4 setores.</p>
+      <h1 class="text-3xl font-extrabold tracking-tight text-gray-900">Equipamentos</h1>
+      <p class="text-gray-500 text-sm mt-1">Gestão de equipamentos e ativos</p>
     </div>
-    <button routerLink="/assets/novo" 
-            class="flex items-center gap-2 bg-[#001a33] text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-800 transition-all shadow-lg">
-      <img src="https://unpkg.com/lucide-static@latest/icons/plus.svg" class="w-4 h-4 invert">
-      Add Equipment
-    </button>
   </div>
 
-  <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 grid grid-cols-1 md:grid-cols-4 gap-4">
-    <input type="text" placeholder="Search ID or Name..." class="border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
-    <select class="border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none">
-      <option>All Sectors</option>
-    </select>
-    <select class="border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none">
-      <option>Any Status</option>
-    </select>
-    <button class="bg-blue-50 text-blue-600 font-bold rounded-lg px-4 py-2 text-sm hover:bg-blue-100 transition-colors">
-      Aplicar Filtros
-    </button>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-gray-500 text-sm font-medium">Total de Equipamentos</span>
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      </div>
+      <h2 class="text-4xl font-bold text-blue-600">
+        <span *ngIf="loading" class="text-2xl text-blue-300">...</span>
+        <span *ngIf="!loading">{{ totalEquipamentos }}</span>
+      </h2>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-gray-500 text-sm font-medium">Equipamentos Ativos</span>
+        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+      <h2 class="text-4xl font-bold text-green-500">
+        <span *ngIf="loading" class="text-2xl text-green-300">...</span>
+        <span *ngIf="!loading">{{ equipamentosAtivos }}</span>
+      </h2>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-gray-500 text-sm font-medium">Equipamentos Inativos</span>
+        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+      </div>
+      <h2 class="text-4xl font-bold text-red-500">
+        <span *ngIf="loading" class="text-2xl text-red-300">...</span>
+        <span *ngIf="!loading">{{ equipamentosInativos }}</span>
+      </h2>
+    </div>
+
   </div>
 
-  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-    <table class="min-w-full">
-      <thead>
-        <tr>
-          <th>Código</th>
-          <th>Nome</th>
-          <th>Localização</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of equipamentos; track item.id) {
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    
+    <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <h3 class="text-xl font-bold text-gray-800">Lista de Equipamentos</h3>
+
+      <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+        <select [(ngModel)]="filtroLocalizacao" class="bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:border-blue-500 cursor-pointer min-w-[150px]">
+          <option value="TODAS">Todas Localizações</option>
+          <option *ngFor="let loc of localizacoesDisponiveis" [value]="loc">{{ loc }}</option>
+        </select>
+        
+        <select [(ngModel)]="filtroTipo" class="bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:border-blue-500 cursor-pointer min-w-[140px]">
+          <option value="TODOS">Todos os Tipos</option>
+          <option *ngFor="let tipo of tiposDisponiveis" [value]="tipo">{{ tipo }}</option>
+        </select>
+
+        <select [(ngModel)]="filtroStatus" class="bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:border-blue-500 cursor-pointer min-w-[140px]">
+          <option value="TODOS">Qualquer Status</option>
+          <option value="ATIVO">Somente Ativos</option>
+          <option value="INATIVO">Somente Inativos</option>
+        </select>
+
+        <div class="relative w-full sm:w-64">
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" [(ngModel)]="termoBusca" placeholder="Buscar código ou nome..." 
+                 class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 pl-9 pr-4 text-sm text-gray-700 focus:outline-none focus:border-blue-500 transition-all">
+        </div>
+      
+      <!-- <div class="flex items-center gap-4 w-full sm:w-auto">
+        <div class="relative w-full sm:w-64">
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" [(ngModel)]="termoBusca" placeholder="Buscar equipamentos..." 
+                 class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 pl-9 pr-4 text-sm text-gray-700 focus:outline-none focus:border-blue-500">
+        </div> -->
+        
+        <button routerLink="/assets/novo" class="whitespace-nowrap flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Novo Equipamento
+        </button>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm whitespace-nowrap">
+        <thead class="bg-gray-50 text-gray-500 font-semibold border-b border-gray-100">
           <tr>
-            <td>{{ item.codigo }}</td>
-            <td>{{ item.nome }}</td>
-            <td>{{ item.localizacao }}</td>
-            <td>{{ item.ativo ? 'Ativo' : 'Inativo' }}</td>
+            <th class="px-6 py-4">Código</th>
+            <th class="px-6 py-4">Nome</th>
+            <th class="px-6 py-4">Tipo</th>
+            <th class="px-6 py-4">Localização</th>
+            <th class="px-6 py-4">Fabricante</th>
+            <th class="px-6 py-4">Modelo</th>
+            <th class="px-6 py-4">Status</th>
+            <th class="px-6 py-4 text-right">Ações</th>
           </tr>
-        } @empty {
-          <tr>
-            <td colspan="4">Nenhum equipamento encontrado no banco.</td>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          
+          <tr *ngFor="let eq of equipamentosFiltrados" class="hover:bg-gray-50/50 transition-colors">
+            <td class="px-6 py-4 font-medium text-gray-600">{{ eq.codigo }}</td>
+            <td class="px-6 py-4 font-bold text-gray-800">{{ eq.nome }}</td>
+            <td class="px-6 py-4 text-gray-500">{{ eq.tipo }}</td>
+            <td class="px-6 py-4 text-gray-500">{{ eq.setor?.nome || '-' }}</td>
+            <td class="px-6 py-4 text-gray-500">{{ eq.fabricante || '-' }}</td>
+            <td class="px-6 py-4 text-gray-500">{{ eq.modelo || '-' }}</td>
+            
+            <td class="px-6 py-4">
+              <span *ngIf="eq.ativo" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-600 border border-green-200">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Ativo
+              </span>
+              <span *ngIf="!eq.ativo" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-600 border border-red-200">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                Inativo
+              </span>
+            </td>
+
+            <td class="px-6 py-4 text-right">
+              <button [routerLink]="['/assets/editar', eq.id]" class="inline-flex items-center gap-2 text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors font-semibold text-xs">
+                Editar
+              </button>
+            </td>
           </tr>
-        }
-      </tbody>
-    </table>
+
+        </tbody>
+      </table>
+      
+      <div *ngIf="!loading && equipamentosFiltrados.length === 0" class="p-8 text-center text-gray-500">
+        Nenhum equipamento encontrado.
+      </div>
+      
+    </div>
   </div>
 </div>

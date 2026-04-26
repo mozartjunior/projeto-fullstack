@@ -10,6 +10,10 @@ export class PlanoManutencaoRepository {
     return this.repository.save(plano);
   }
 
+  async save(plano: any) {
+    return this.repository.save(plano);
+  }
+
   async findAll() {
     return this.repository.find({
       where: { ativo: true },
@@ -27,13 +31,13 @@ export class PlanoManutencaoRepository {
 
   async findByEquipamento(equipamento_id: number) {
     return this.repository.find({
-      where: { equipamento: { id: equipamento_id }, ativo: true },
+      // Como adicionamos a coluna física, podemos buscar direto por ela!
+      where: { equipamento_id: equipamento_id, ativo: true }, 
       relations: ["equipamento", "tecnico"],
       order: { proxima_em: "ASC" },
     });
   }
 
-  // Planos atrasados → proxima_em < hoje
   async findAtrasados() {
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
@@ -44,7 +48,6 @@ export class PlanoManutencaoRepository {
     });
   }
 
-  // Planos previstos para os próximos N dias
   async findProximos(dias: number) {
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
@@ -58,19 +61,23 @@ export class PlanoManutencaoRepository {
   }
 
   async update(id: number, data: any) {
-    await this.repository.update({ id }, data);
-    return this.repository.findOne({
-      where: { id },
-      relations: ["equipamento", "tecnico"],
-    });
+    const plano = await this.findById(id);
+    if (!plano) throw new Error("Plano não encontrado");
+
+    // Limpamos as relações de objeto para evitar conflitos se formos trocar de equipamento/tecnico
+    if (data.equipamento_id) plano.equipamento = null as any;
+    if (data.tecnico_id) plano.tecnico = null as any;
+
+    Object.assign(plano, data);
+    return this.repository.save(plano);
   }
 
   async desativar(id: number) {
-    await this.repository.update({ id }, { ativo: false });
-    return this.repository.findOne({
-      where: { id },
-      relations: ["equipamento", "tecnico"],
-    });
+    const plano = await this.findById(id);
+    if (!plano) throw new Error("Plano não encontrado");
+    
+    plano.ativo = false;
+    return this.repository.save(plano);
   }
 
   async countProximos(dias: number): Promise<number> {
@@ -79,7 +86,7 @@ export class PlanoManutencaoRepository {
     
     const limite = new Date(hoje);
     limite.setDate(hoje.getDate() + dias);
-    limite.setHours(23, 59, 59, 999); // Garante que vai até o final do dia limite
+    limite.setHours(23, 59, 59, 999);
 
     return this.repository.count({
       where: { 
@@ -90,6 +97,10 @@ export class PlanoManutencaoRepository {
   }
 
   async updateProximaEm(id: number, novaData: Date) {
-    await this.repository.update({ id }, { proxima_em: novaData });
+    const plano = await this.findById(id);
+    if (plano) {
+      plano.proxima_em = novaData;
+      await this.repository.save(plano);
+    }
   }
 }
