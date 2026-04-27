@@ -46,7 +46,7 @@ export class RefreshTokenService {
         perfil: usuario.perfil,
         setor_id: usuario.setor?.id_setor,
       },
-      process.env.JWT_SECRET as string,
+      process.env.JWT_ACCESS_SECRET as string,
       { expiresIn: "15m" }
     );
 

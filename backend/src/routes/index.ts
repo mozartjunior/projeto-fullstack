@@ -14,7 +14,7 @@ import { CalendarioController } from "../controllers/CalendarioController.js";
 
 import { validateBody } from "../middlewares/validateBody.js";
 import { Perfil } from "../types/Perfil.js";
-import { loginSchema, refreshSchema, logoutSchema } from "../dtos/AuthDTO.js";
+import { loginSchema, refreshSchema, logoutSchema } from "../dtos/authDTO.js";
 import { createUserSchema } from "../dtos/createUserSchemaDTO.js";
 import { createPlanoSchema, updatePlanoSchema } from "../dtos/createPlanoManutencaoDTO.js";
 

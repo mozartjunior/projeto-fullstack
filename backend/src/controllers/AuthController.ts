@@ -4,7 +4,7 @@ import { RefreshTokenService } from "../services/auth/RefreshTokenService.js";
 import { LogoutService } from "../services/auth/LogoutService.js";
 import { UsuarioRepository } from "../repositories/UsuarioRepository.js";
 import { SessaoRepository } from "../repositories/SessaoRepository.js";
-import { loginSchema, refreshSchema, logoutSchema } from "../dtos/AuthDTO.js";
+import { loginSchema, refreshSchema, logoutSchema } from "../dtos/authDTO.js";
 
 export class AuthController {
 
