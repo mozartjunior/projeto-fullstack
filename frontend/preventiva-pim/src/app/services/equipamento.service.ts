@@ -11,24 +11,30 @@ export class EquipamentosService {
   constructor(private http: HttpClient) {}
 
   listarTodos(): Observable<Equipamento[]> {
-    const token = localStorage.getItem('access_token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<Equipamento[]>(this.API, { headers });
+    // const token = localStorage.getItem('access_token');
+    // const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<Equipamento[]>(this.API);
   }
 
   buscarPorId(id: number): Observable<Equipamento> {
     return this.http.get<Equipamento>(`${this.API}/${id}`);
   }
 
-  salvar(equipamento: Equipamento): Observable<Equipamento> {
+  salvar(equipamento: Partial<Equipamento>): Observable<Equipamento> {
     if (equipamento.id) {
       return this.http.put<Equipamento>(`${this.API}/${equipamento.id}`, equipamento);
     }
     return this.http.post<Equipamento>(this.API, equipamento);
   }
 
-  // Busca para o filtro da tabela
   pesquisar(termo: string): Observable<Equipamento[]> {
-    return this.http.get<Equipamento[]>(`${this.API}/search?q=${termo}`);
+    return this.http.get<Equipamento[]>(`${this.API}/search`, {
+      params: { q: termo }
+    });
   }
+
+  excluir(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API}/${id}`);
+  }
+  
 }
