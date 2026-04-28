@@ -5,3 +5,6 @@ export enum Perfil{
     GESTOR = "GESTOR"
 
 }
+
+// guard-routes no frontend
+// 

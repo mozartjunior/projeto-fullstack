@@ -7,6 +7,7 @@ export interface Equipamento {
   fabricante?: string;  // Opcional
   modelo?: string;      // Opcional
   ativo: boolean;
+  id_setor?: string
   setor?: {
     id_setor: string;
     nome: string;

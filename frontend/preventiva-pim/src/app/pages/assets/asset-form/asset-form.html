@@ -50,9 +50,17 @@
 
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-1.5">Localização <span class="text-red-500">*</span></label>
-              <input type="text" formControlName="localizacao" placeholder="Ex: Setor A - Linha 1" 
-                     class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                     [ngClass]="{'border-red-300 focus:border-red-500 focus:ring-red-500': assetForm.get('localizacao')?.invalid && assetForm.get('localizacao')?.touched}">
+              
+              <select formControlName="id_setor" 
+                      class="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all appearance-none cursor-pointer"
+                      [ngClass]="{'border-red-300 focus:border-red-500 focus:ring-red-500': assetForm.get('id_setor')?.invalid && assetForm.get('id_setor')?.touched}">
+    
+                <option value="" disabled selected>Selecione um setor...</option>
+                
+                <option *ngFor="let setor of setores" [value]="setor.id_setor">
+                  {{ setor.nome }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
@@ -106,16 +114,19 @@
         <button type="button" (click)="voltar()" class="px-6 py-2.5 rounded-lg font-semibold text-gray-600 hover:bg-gray-200 transition-colors text-sm">
           Cancelar
         </button>
-        
-        <button type="submit" [disabled]="loading" class="px-6 py-2.5 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors text-sm shadow-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+        <button type="submit"
+                [disabled]="loading || assetForm.invalid"
+                class="px-6 py-2.5 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors text-sm shadow-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+          
           <span *ngIf="loading">Salvando...</span>
           <span *ngIf="!loading">
-            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
             Salvar Equipamento
           </span>
         </button>
       </div>
-
     </form>
   </div>
 </div>
